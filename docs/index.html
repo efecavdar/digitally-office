@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Digitally Office</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; overflow: hidden; background: #07060d;
+    font-family: "Menlo", "Consolas", "Courier New", monospace;
+    color: #d8d4e8; user-select: none;
+  }
+
+  #wrap {
+    position: fixed; inset: 0 0 34px 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #stage {
+    width: 640px; height: 360px; position: relative;
+    transform-origin: center center; flex: 0 0 auto;
+  }
+  #screen {
+    width: 640px; height: 360px; display: block;
+    image-rendering: pixelated; image-rendering: crisp-edges;
+  }
+  #overlay { position: absolute; inset: 0; pointer-events: none; }
+
+  .plate {
+    position: absolute; text-align: center;
+    font-size: 6px; line-height: 9px; letter-spacing: 0.5px;
+    color: rgba(232, 226, 200, 0.85);
+    text-shadow: 0 1px 0 rgba(0,0,0,0.9);
+    white-space: nowrap; overflow: hidden;
+    pointer-events: auto; cursor: default;
+  }
+  .plate.hot {
+    color: #ffd66e;
+    text-shadow: 0 0 5px rgba(255, 214, 110, 0.8), 0 1px 0 #000;
+    transition: color 0.15s;
+  }
+  .floor-tag {
+    position: absolute; font-size: 5px; letter-spacing: 1px;
+    color: rgba(160, 150, 200, 0.8); text-shadow: 0 1px 0 #000;
+  }
+  .nametag {
+    position: absolute; font-size: 5px; line-height: 6px; font-weight: 700;
+    letter-spacing: 0.3px; white-space: nowrap; transform: translateX(-50%);
+    text-shadow: 0 1px 0 #000, 0 0 3px rgba(0,0,0,0.9); pointer-events: none;
+  }
+  .filetag {
+    position: absolute; font-size: 6px; font-weight: 700; color: #ffd66e;
+    white-space: nowrap; transform: translateX(-50%); pointer-events: none;
+    text-shadow: 0 1px 0 #000; animation: filetag-float 2.4s forwards;
+  }
+  @keyframes filetag-float {
+    0% { opacity: 0; margin-top: 5px; }
+    15% { opacity: 1; }
+    100% { opacity: 0; margin-top: -12px; }
+  }
+  #roster {
+    position: fixed; top: 36px; left: 12px; z-index: 22;
+    font-size: 12px; line-height: 19px; letter-spacing: 0.5px;
+    background: rgba(10, 8, 18, 0.74); border: 2px solid #2c2740;
+    padding: 6px 10px; max-width: 52ch; text-shadow: 0 1px 0 #000;
+  }
+  #roster:empty { display: none; }
+  #roster .r-dot { display: inline-block; width: 8px; height: 8px; margin-right: 7px; }
+  #roster .r-name { color: #e8e4f8; font-weight: 700; margin-right: 7px; }
+  #roster .r-status { color: #a49ec4; }
+
+  #scanlines {
+    position: fixed; inset: 0; pointer-events: none; z-index: 30;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.16) 2px 4px);
+    box-shadow: inset 0 0 120px rgba(0, 0, 20, 0.38);
+  }
+
+  #hud {
+    position: fixed; top: 8px; left: 12px; right: 12px; z-index: 20;
+    display: flex; justify-content: space-between; align-items: baseline;
+    pointer-events: none; text-shadow: 0 2px 0 #000;
+  }
+  #hud-title { font-size: 15px; font-weight: 700; letter-spacing: 3px; color: #ffd66e; }
+  #hud-right { display: flex; gap: 14px; font-size: 12px; letter-spacing: 1px; }
+  #hud-mode.live { color: #53c66e; }
+  #hud-mode.demo { color: #e86eb0; }
+  #hud-mode.baglaniyor { color: #8a8aa8; }
+  #hud-clock { color: #9ad0ff; }
+  #hud-stats { color: #8a86b0; }
+
+  #ticker {
+    position: fixed; left: 0; right: 0; bottom: 0; height: 34px; z-index: 25;
+    background: #0a0812; border-top: 2px solid #2c2740;
+    overflow: hidden; display: flex; align-items: center;
+  }
+  #ticker-track {
+    white-space: nowrap; will-change: transform;
+    font-size: 14px; letter-spacing: 1px; text-transform: uppercase;
+    color: #ffd66e; text-shadow: 0 0 6px rgba(255, 214, 110, 0.45), 0 2px 0 #000;
+  }
+</style>
+</head>
+<body>
+  <div id="hud">
+    <div id="hud-title">DIGITALLY OFFICE</div>
+    <div id="hud-right">
+      <span id="hud-stats"></span>
+      <span id="hud-mode" class="baglaniyor">…</span>
+      <span id="hud-clock">--:--</span>
+    </div>
+  </div>
+
+  <div id="wrap">
+    <div id="stage">
+      <canvas id="screen" width="640" height="360"></canvas>
+      <div id="overlay"></div>
+    </div>
+  </div>
+
+  <div id="roster"></div>
+  <div id="scanlines"></div>
+  <div id="ticker"><div id="ticker-track"></div></div>
+
+  <script src="boot-data.js"></script>
+  <script src="i18n.js"></script>
+  <script src="sprites.js"></script>
+  <script src="layout.js"></script>
+  <script src="render.js"></script>
+  <script src="audio.js"></script>
+  <script src="demo.js"></script>
+  <script src="office.js"></script>
+</body>
+</html>
