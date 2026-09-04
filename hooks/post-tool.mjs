@@ -42,8 +42,16 @@ process.stdin.on('end', () => {
     const root = process.env.CLAUDE_PROJECT_DIR || input.cwd || process.cwd();
     let rel = String(filePath).split('\\').join('/');
     const rootFwd = String(root).split('\\').join('/').replace(/\/+$/, '');
-    if (rel.startsWith(rootFwd + '/')) rel = rel.slice(rootFwd.length + 1);
-    payload = { type: 'agent_edit', actor, path: rel, meta: { tool: input.tool_name } };
+    const meta = { tool: input.tool_name };
+    if (rel.startsWith(rootFwd + '/')) {
+      rel = rel.slice(rootFwd.length + 1);
+    } else {
+      // Repo dışı dosya (plan, not, başka proje): mutlak yolu ekrana basma —
+      // yalnız dosya adı görünsün, oda eşlemesi Arşiv'e düşsün.
+      rel = rel.split('/').pop();
+      meta.external = true;
+    }
+    payload = { type: 'agent_edit', actor, path: rel, meta };
   }
   const body = JSON.stringify(payload);
 
