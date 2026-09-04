@@ -2,16 +2,41 @@
   "name": "digitally-office",
   "version": "0.1.0",
   "description": "A retro pixel-art office that visualizes your dev activity live — every module is a room, agents (you + your Claude Code sessions) walk around and work, commits launch rockets. Music-reactive; built for live-coding/DJ sets.",
-  "keywords": ["visualization", "pixel-art", "claude-code", "dev-tools", "retro", "office", "live-coding", "vj"],
+  "keywords": [
+    "visualization",
+    "pixel-art",
+    "claude-code",
+    "dev-tools",
+    "retro",
+    "office",
+    "live-coding",
+    "vj"
+  ],
   "license": "MIT",
   "author": "Efe Çavdar",
   "type": "module",
-  "bin": { "digitally-office": "bin/cli.mjs" },
-  "files": ["bin", "lib", "hooks", "docs", "server.mjs", "README.md", "README.tr.md", "LICENSE"],
+  "bin": {
+    "digitally-office": "bin/cli.mjs"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "hooks",
+    "docs",
+    "server.mjs",
+    "README.md",
+    "README.tr.md",
+    "LICENSE"
+  ],
   "scripts": {
     "start": "node bin/cli.mjs",
     "test": "node --test test/mapping.test.mjs"
   },
-  "repository": { "type": "git", "url": "https://github.com/efecavdar/digitally-office.git" },
-  "engines": { "node": ">=18" }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/efecavdar/digitally-office.git"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }
