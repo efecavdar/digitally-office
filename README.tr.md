@@ -2,6 +2,11 @@
 
 **Geliştirme aktiviteni canlı izleyen retro pixel-art ofis.**
 
+![Ofisin iki katında çalışan dört ajan](media/preview.gif)
+
+<sub>Gerçek bir oturumun kaydı: aynı repoda aynı anda çalışan bir geliştirici
+ve üç Claude Code ajanı.</sub>
+
 Repo'nun her modülü bir oda olur. Pixel ajanlar — sen *ve Claude Code
 oturumların* — odalar arasında dolaşır, masalara oturur, o an gerçekten
 değişen şey üzerinde çalışır. Commit'ler çatıdan roket fırlatır. Bir ejderha

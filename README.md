@@ -2,6 +2,11 @@
 
 **A retro pixel-art office that visualizes your dev activity — live.**
 
+![Four agents working across two floors of the office](media/preview.gif)
+
+<sub>Recording of a real session: one developer and three Claude Code agents
+working in the same repo at the same time.</sub>
+
 Every module of your repo becomes a room. Pixel agents — you *and your Claude
 Code sessions* — walk between rooms, sit at desks and work on whatever is
 actually being changed. Commits launch a rocket off the roof. There's a dragon.

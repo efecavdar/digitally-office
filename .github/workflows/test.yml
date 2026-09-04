@@ -1,0 +1,23 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Unit tests
+        run: node --test test/mapping.test.mjs
+      - name: Server boots and serves a layout
+        run: |
+          node server.mjs --no-open &
+          sleep 2
+          curl -sf http://127.0.0.1:4242/layout > /dev/null
+          echo "layout OK"
