@@ -2,6 +2,11 @@
 
 **A retro pixel-art office that visualizes your dev activity — live.**
 
+[![test](https://github.com/efecavdar/digitally-office/actions/workflows/test.yml/badge.svg)](https://github.com/efecavdar/digitally-office/actions/workflows/test.yml)
+[![npm](https://img.shields.io/npm/v/digitally-office)](https://www.npmjs.com/package/digitally-office)
+[![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](package.json)
+
 ![Four agents working across two floors of the office](media/preview.gif)
 
 <sub>Recording of a real session: one developer and three Claude Code agents
