@@ -5,7 +5,8 @@ window.I18N = (function () {
 
   var dict = {
     en: {
-      mode_live: '● LIVE', mode_demo: '◆ DEMO', mode_connecting: '… CONNECTING',
+      mode_live: '● LIVE', mode_demo: '◆ DEMO', mode_replay: '◆ REPLAY', mode_connecting: '… CONNECTING',
+      tk_replay: 'REPLAY ▸ {r}',
       stats: '{n} events · {c} commits',
       office_suffix: ' OFFICE',
       floor1: 'FLOOR 1', floor0: 'FLOOR 0',
@@ -40,7 +41,8 @@ window.I18N = (function () {
       ],
     },
     tr: {
-      mode_live: '● CANLI', mode_demo: '◆ DEMO', mode_connecting: '… BAĞLANIYOR',
+      mode_live: '● CANLI', mode_demo: '◆ DEMO', mode_replay: '◆ KAYIT', mode_connecting: '… BAĞLANIYOR',
+      tk_replay: 'KAYITTAN OYNATMA ▸ {r}',
       stats: '{n} olay · {c} commit',
       office_suffix: ' OFİSİ',
       floor1: 'KAT 1', floor0: 'KAT 0',

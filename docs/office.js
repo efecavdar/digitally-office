@@ -61,6 +61,7 @@
   var plates = {};
   var nameTags = {};
   var rosterAccum = 0;
+  var replaySrc = null;
   var sseErrors = 0, es = null;
 
   // ── Açılış ────────────────────────────────────────────────────────
@@ -90,6 +91,7 @@
       requestAnimationFrame(loop);
 
       if (params.has('demo')) {
+        replaySrc = params.get('src') || null; // ?demo=replay&src=sessions/x.jsonl
         startDemo(params.get('demo') === 'replay' ? 'replay' : 'gen', I18N.t('demo_request'));
       } else {
         connectSSE();
@@ -490,21 +492,33 @@
   }
 
   function startDemo(mode, reason) {
-    state.mode = 'demo';
+    // Kayıttan oynatma ile sentetik demo ayrı etiketlenir: rozet, izleyene
+    // verinin gerçek bir oturumdan mı geldiğini dürüstçe söylemeli.
+    state.mode = mode === 'replay' ? 'replay' : 'demo';
     updateHud();
-    Demo.start(handleEvent, { rooms: geo.rooms, mode: mode });
-    ticker(I18N.t('tk_demo', { r: reason, i: Demo.getIntensity() }));
+    Demo.start(handleEvent, { rooms: geo.rooms, mode: mode, replayUrl: replaySrc });
+    ticker(state.mode === 'replay'
+      ? I18N.t('tk_replay', { r: reason })
+      : I18N.t('tk_demo', { r: reason, i: Demo.getIntensity() }));
   }
 
   function updateHud() {
     hudMode.textContent = state.mode === 'live' ? I18N.t('mode_live')
-      : (state.mode === 'demo' ? I18N.t('mode_demo') : I18N.t('mode_connecting'));
+      : (state.mode === 'replay' ? I18N.t('mode_replay')
+        : (state.mode === 'demo' ? I18N.t('mode_demo') : I18N.t('mode_connecting')));
     hudMode.className = state.mode;
   }
 
   // Ajan isim etiketleri: sprite'ı takip eden, ajan renginde DOM yazıları
   function updateNameTags() {
-    state.agents.forEach(function (a) {
+    // Aynı odada çalışan ajanların etiketleri üst üste binmesin: soldan sağa
+    // yerleştirip çakışanı bir kat yukarı taşı.
+    var list = [];
+    state.agents.forEach(function (a) { list.push(a); });
+    list.sort(function (p, q) { return p.x - q.x; });
+    var placed = [];
+
+    list.forEach(function (a) {
       var el = nameTags[a.id];
       if (!el) {
         el = document.createElement('div');
@@ -517,8 +531,18 @@
         ? ' ' + (WORK_EMOJI[a.workType] || '')
         : (a.anim === 'coffee' ? ' ☕' : ''));
       if (el.textContent !== txt) el.textContent = txt;
+
+      var ty = a.y - 34;
+      for (var guard = 0; guard < 4; guard++) {
+        var clash = placed.some(function (p) {
+          return Math.abs(p.x - a.x) < 54 && Math.abs(p.y - ty) < 7;
+        });
+        if (!clash) break;
+        ty -= 8;
+      }
+      placed.push({ x: a.x, y: ty });
       el.style.left = Math.round(a.x) + 'px';
-      el.style.top = Math.round(a.y - 34) + 'px';
+      el.style.top = Math.round(ty) + 'px';
     });
     Object.keys(nameTags).forEach(function (id) {
       if (!state.agents.has(id)) { nameTags[id].remove(); delete nameTags[id]; }
