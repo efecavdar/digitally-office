@@ -80,6 +80,8 @@ Drop a `.devoffice.json` in your repo root:
   "signText": "ACME",
   "lang": "tr",
   "port": 4242,
+  "host": "127.0.0.1",
+  "capturePrompts": true,
   "floorNames": { "1": "PRODUCT", "0": "MACHINE ROOM" },
   "rooms": [
     { "id": "crm", "name": "CRM Lounge", "floor": 1,
@@ -90,6 +92,25 @@ Drop a `.devoffice.json` in your repo root:
 
 Everything is optional — `signText` defaults to your repo folder's name,
 `rooms` to the auto-generated map, `lang` to English (`?lang=tr` works too).
+
+## Privacy & network
+
+The office is a local tool and it defaults to staying that way:
+
+- **Binds to `127.0.0.1` only.** Nothing leaves your machine and nobody on your
+  network can reach it. Want it on a second screen or a projector laptop? Run
+  `npx digitally-office --host 0.0.0.0` — you'll get a warning banner, so use it
+  only on a network you trust.
+- **What the event stream contains:** changed file paths, room names, commit
+  subjects/authors, and (locally) the first 44 characters of a Claude prompt or
+  28 characters of a bash command, so the ticker can say what's going on.
+- **Prompt and command text is dropped automatically whenever you expose the
+  server to a network.** To switch it off permanently, run with
+  `--no-capture-prompts` or set `"capturePrompts": false`.
+- **Logs stay local:** every session is appended to
+  `~/.digitally-office/sessions/*.jsonl` on your own disk, so you can replay a
+  good day later. Nothing is uploaded anywhere — there is no telemetry, no
+  analytics, and the package has zero dependencies.
 
 ## How it works
 

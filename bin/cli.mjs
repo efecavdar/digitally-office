@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 // digitally-office CLI
-//   npx digitally-office                 run the office for the current repo
-//   npx digitally-office --install-hooks add Claude Code hooks to this repo
-//   npx digitally-office --print-layout  dump room layout JSON
-//   npx digitally-office --no-open       don't open the browser
-//   npx digitally-office --root <dir>    target repo (default: cwd)
+//   npx digitally-office                  run the office for the current repo
+//   npx digitally-office --install-hooks  add Claude Code hooks to this repo
+//   npx digitally-office --print-layout   dump room layout JSON
+//   npx digitally-office --no-open        don't open the browser
+//   npx digitally-office --root <dir>     target repo (default: cwd)
+//   npx digitally-office --host 0.0.0.0   expose to your LAN (default: localhost)
+//   npx digitally-office --no-capture-prompts   never show/log prompt or command text
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -23,7 +25,7 @@ const root = path.resolve(argValue('--root') || process.cwd());
 
 if (args.includes('--help') || args.includes('-h')) {
   console.log(fs.readFileSync(new URL('./cli.mjs', import.meta.url), 'utf8')
-    .split('\n').slice(1, 8).map((l) => l.replace(/^\/\/ ?/, '')).join('\n'));
+    .split('\n').slice(1, 10).map((l) => l.replace(/^\/\/ ?/, '')).join('\n'));
   process.exit(0);
 }
 

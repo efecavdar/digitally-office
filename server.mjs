@@ -30,7 +30,7 @@ const PING_MS = 15_000;
 const BODY_MAX = 32 * 1024;
 
 // ── Config + oda üretimi + açılış taraması ─────────────────────────
-const cfg = loadConfig(REPO_ROOT);
+const cfg = loadConfig(REPO_ROOT, process.argv);
 const base = Array.isArray(cfg.rooms) && cfg.rooms.length
   ? cfg.rooms
   : autoRooms(REPO_ROOT);
@@ -86,6 +86,8 @@ function ingest(body) {
   if (err) return { err };
   const { id: _id, ts: _ts, v: _v, ...rest } = body; // id/ts sunucuya ait
   const evt = makeEvent(rest);
+  // Prompt/komut metni yakalama kapalıysa hiç yayınlanmaz ve loglanmaz.
+  if (!cfg.capturePrompts && evt.meta && evt.meta.cmd) delete evt.meta.cmd;
   if (evt.path && !evt.roomId) evt.roomId = resolveRoom(evt.path);
   if (evt.type === 'agent_edit' && evt.path) recentHookPaths.set(evt.path, Date.now());
   broadcast(evt);
@@ -213,7 +215,7 @@ server.on('error', (err) => {
   process.exit(1);
 });
 
-server.listen(cfg.port, () => {
+server.listen(cfg.port, cfg.host, () => {
   const url = `http://localhost:${cfg.port}`;
   console.log('┌──────────────────────────────────────────────┐');
   console.log(`│  ${cfg.signText} OFFICE is open 🏢`.padEnd(47) + '│');
@@ -222,6 +224,12 @@ server.listen(cfg.port, () => {
   console.log(`  Repo     : ${REPO_ROOT}`);
   console.log(`  Files    : ${totalFiles} scanned → ${layout.rooms.length} rooms`);
   console.log(`  Log      : ${logFile}`);
+  if (cfg.exposed) {
+    console.log('');
+    console.log(`  ⚠ Bound to ${cfg.host} — anyone on this network can watch the`);
+    console.log('    event stream (file paths, commit messages). Prompt/command');
+    console.log('    text is withheld while exposed. Use a trusted network.');
+  }
 
   startWatcher(REPO_ROOT, watchRoots, { onEvent: broadcast, wasHookRecent, resolveRoom, humanLabel });
   startGitPoll(REPO_ROOT, broadcast);

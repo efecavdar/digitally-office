@@ -42,8 +42,20 @@ eder. Sunucu kapalıyken hook ~70 ms'de sessizce çıkar — Claude'u yavaşlatm
 ## Yapılandırma
 
 Repo köküne `.devoffice.json` koy (hepsi opsiyonel): `signText` (çatıdaki neon,
-varsayılan klasör adı), `lang` (`"tr"`), `port`, `floorNames`, `rooms` (elle
-oda haritası). `?lang=tr` URL parametresi de çalışır.
+varsayılan klasör adı), `lang` (`"tr"`), `port`, `host`, `capturePrompts`,
+`floorNames`, `rooms` (elle oda haritası). `?lang=tr` URL parametresi de çalışır.
+
+## Gizlilik ve ağ
+
+- Sunucu **yalnız `127.0.0.1`**'e bağlanır; ağdaki kimse erişemez. İkinci ekran
+  veya projeksiyon makinesi için `--host 0.0.0.0` ile aç — uyarı banner'ı çıkar,
+  yalnız güvendiğin ağda kullan.
+- Akışta ne var: değişen dosya yolları, oda adları, commit mesajları ve yerelde
+  prompt'un ilk 44 / bash komutunun ilk 28 karakteri (ticker yazısı için).
+- **Ağa açtığın anda prompt ve komut metni otomatik olarak kesilir.** Tamamen
+  kapatmak için `--no-capture-prompts` ya da `"capturePrompts": false`.
+- Kayıtlar kendi diskinde: `~/.digitally-office/sessions/*.jsonl`. Hiçbir yere
+  veri gönderilmez — telemetri yok, analitik yok, bağımlılık yok.
 
 ## Lisans
 
