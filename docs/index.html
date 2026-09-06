@@ -6,7 +6,7 @@
 <title>Digitally Office</title>
 <link rel="icon" href="data:,">
 <style>
-  :root { color-scheme: dark; }
+  :root { color-scheme: dark; --kc: 1; --ticker-h: 34px; }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
   body {
@@ -16,22 +16,21 @@
   }
 
   #wrap {
-    position: fixed; inset: 0 0 34px 0;
+    position: fixed; inset: 0 0 var(--ticker-h) 0;
     display: flex; align-items: center; justify-content: center;
   }
-  #stage {
-    width: 640px; height: 360px; position: relative;
-    transform-origin: center center; flex: 0 0 auto;
-  }
+  /* Boyutlar JS'ten gelir: bir kaynak piksel = tam sayı cihaz pikseli. */
+  #stage { position: relative; flex: 0 0 auto; }
   #screen {
-    width: 640px; height: 360px; display: block;
+    display: block;
     image-rendering: pixelated; image-rendering: crisp-edges;
   }
-  #overlay { position: absolute; inset: 0; pointer-events: none; }
+  #overlay { position: absolute; inset: 0; pointer-events: none; --k: 1; }
 
   .plate {
     position: absolute; text-align: center;
-    font-size: 6px; line-height: 9px; letter-spacing: 0.5px;
+    font-size: calc(6px * var(--k)); line-height: calc(9px * var(--k));
+    letter-spacing: calc(0.5px * var(--k));
     color: rgba(232, 226, 200, 0.85);
     text-shadow: 0 1px 0 rgba(0,0,0,0.9);
     white-space: nowrap; overflow: hidden;
@@ -43,27 +42,28 @@
     transition: color 0.15s;
   }
   .floor-tag {
-    position: absolute; font-size: 5px; letter-spacing: 1px;
+    position: absolute; white-space: nowrap; font-size: calc(5px * var(--k)); letter-spacing: calc(1px * var(--k));
     color: rgba(160, 150, 200, 0.8); text-shadow: 0 1px 0 #000;
   }
   .nametag {
-    position: absolute; font-size: 5px; line-height: 6px; font-weight: 700;
-    letter-spacing: 0.3px; white-space: nowrap; transform: translateX(-50%);
+    position: absolute; font-size: calc(5px * var(--k)); line-height: calc(6px * var(--k)); font-weight: 700;
+    letter-spacing: calc(0.3px * var(--k)); white-space: nowrap; transform: translateX(-50%);
     text-shadow: 0 1px 0 #000, 0 0 3px rgba(0,0,0,0.9); pointer-events: none;
   }
   .filetag {
-    position: absolute; font-size: 6px; font-weight: 700; color: #ffd66e;
+    position: absolute; font-size: calc(6px * var(--k)); font-weight: 700; color: #ffd66e;
     white-space: nowrap; transform: translateX(-50%); pointer-events: none;
     text-shadow: 0 1px 0 #000; animation: filetag-float 2.4s forwards;
   }
   @keyframes filetag-float {
-    0% { opacity: 0; margin-top: 5px; }
+    0% { opacity: 0; margin-top: calc(5px * var(--k)); }
     15% { opacity: 1; }
-    100% { opacity: 0; margin-top: -12px; }
+    100% { opacity: 0; margin-top: calc(-12px * var(--k)); }
   }
   #roster {
-    position: fixed; top: 36px; left: 12px; z-index: 22;
-    font-size: 12px; line-height: 19px; letter-spacing: 0.5px;
+    position: fixed; top: calc(36px * var(--kc)); left: 12px; z-index: 22;
+    font-size: calc(12px * var(--kc)); line-height: calc(19px * var(--kc));
+    letter-spacing: 0.5px;
     background: rgba(10, 8, 18, 0.74); border: 2px solid #2c2740;
     padding: 6px 10px; width: 44ch; max-width: 40vw; text-shadow: 0 1px 0 #000;
   }
@@ -72,7 +72,7 @@
     display: flex; align-items: baseline; gap: 7px;
     white-space: nowrap; overflow: hidden;
   }
-  #roster .r-dot { flex: 0 0 auto; width: 8px; height: 8px; }
+  #roster .r-dot { flex: 0 0 auto; width: calc(8px * var(--kc)); height: calc(8px * var(--kc)); }
   #roster .r-name { flex: 0 0 auto; color: #e8e4f8; font-weight: 700; }
   #roster .r-status { flex: 1 1 auto; color: #a49ec4; overflow: hidden; text-overflow: ellipsis; }
 
@@ -88,8 +88,8 @@
     display: flex; justify-content: space-between; align-items: baseline;
     pointer-events: none; text-shadow: 0 2px 0 #000;
   }
-  #hud-title { font-size: 15px; font-weight: 700; letter-spacing: 3px; color: #ffd66e; }
-  #hud-right { display: flex; gap: 14px; font-size: 12px; letter-spacing: 1px; }
+  #hud-title { font-size: calc(15px * var(--kc)); font-weight: 700; letter-spacing: 3px; color: #ffd66e; }
+  #hud-right { display: flex; gap: calc(14px * var(--kc)); font-size: calc(12px * var(--kc)); letter-spacing: 1px; }
   #hud-mode.live { color: #53c66e; }
   #hud-mode.demo { color: #e86eb0; }
   #hud-mode.replay { color: #5fd6ff; }
@@ -98,13 +98,14 @@
   #hud-stats { color: #8a86b0; }
 
   #ticker {
-    position: fixed; left: 0; right: 0; bottom: 0; height: 34px; z-index: 25;
+    position: fixed; left: 0; right: 0; bottom: 0; height: var(--ticker-h); z-index: 25;
     background: #0a0812; border-top: 2px solid #2c2740;
     overflow: hidden; display: flex; align-items: center;
   }
   #ticker-track {
     white-space: nowrap; will-change: transform;
-    font-size: 14px; letter-spacing: 1px; text-transform: uppercase;
+    font-size: calc(14px * var(--kc)); letter-spacing: calc(1px * var(--kc));
+    text-transform: uppercase;
     color: #ffd66e; text-shadow: 0 0 6px rgba(255, 214, 110, 0.45), 0 2px 0 #000;
   }
 </style>

@@ -62,6 +62,8 @@
   var nameTags = {};
   var rosterAccum = 0;
   var replaySrc = null;
+  var scaleK = 1;
+  var overlayItems = [];
   var sseErrors = 0, es = null;
 
   // ── Açılış ────────────────────────────────────────────────────────
@@ -106,8 +108,40 @@
   }
 
   function fitStage() {
-    var k = Math.min(window.innerWidth / geo.W, (window.innerHeight - 34) / geo.H);
-    stage.style.transform = 'scale(' + k.toFixed(4) + ')';
+    // Pixel-art'ın keskin kalması için bir kaynak piksel TAM SAYI cihaz
+    // pikseline oturmalı. transform: scale() katmanı yeniden örnekleyip
+    // bulanıklaştırdığı için ölçek doğrudan boyut olarak veriliyor.
+    var dpr = window.devicePixelRatio || 1;
+    var availH = window.innerHeight;
+
+    // Arayüz (şerit, pano, başlık) ofisle birlikte büyür — yoksa 4K'da ofis
+    // devleşirken yazılar pul kalır. Sınırlı: en fazla 2.2 kat.
+    var kRough = Math.min(window.innerWidth / geo.W, (availH - 34) / geo.H);
+    var kc = Math.max(1, Math.min(2.2, kRough / 2));
+    var tickerH = Math.round(34 * kc);
+    document.documentElement.style.setProperty('--kc', kc.toFixed(3));
+    document.documentElement.style.setProperty('--ticker-h', tickerH + 'px');
+
+    var kMax = Math.min(window.innerWidth / geo.W, (availH - tickerH) / geo.H);
+    var kDev = Math.max(1, Math.floor(kMax * dpr));
+    scaleK = kDev / dpr;
+    var w = (geo.W * kDev) / dpr, h = (geo.H * kDev) / dpr;
+    stage.style.width = w.toFixed(3) + 'px';
+    stage.style.height = h.toFixed(3) + 'px';
+    canvas.style.width = w.toFixed(3) + 'px';
+    canvas.style.height = h.toFixed(3) + 'px';
+    overlay.style.setProperty('--k', scaleK);
+    layoutOverlay();
+  }
+
+  // Etiketler dünya koordinatında saklanır, ekrana ölçeklenerek konur; yazılar
+  // büyütülmüş küçük punto değil, doğrudan ekran çözünürlüğünde çizilir.
+  function layoutOverlay() {
+    overlayItems.forEach(function (it) {
+      it.el.style.left = Math.round(it.x * scaleK) + 'px';
+      it.el.style.top = Math.round(it.y * scaleK) + 'px';
+      if (it.w !== undefined) it.el.style.width = Math.round(it.w * scaleK) + 'px';
+    });
   }
 
   // ── DOM katmanı: oda tabelaları + kat etiketleri ──────────────────
@@ -117,9 +151,7 @@
       el.className = 'plate';
       el.textContent = r.label;
       el.title = r.name + ' — ' + r.fileCount + ' 📄';
-      el.style.left = r.x0 + 'px';
-      el.style.top = (r.y0 + 2) + 'px';
-      el.style.width = (r.x1 - r.x0) + 'px';
+      overlayItems.push({ el: el, x: r.x0, y: r.y0 + 2, w: r.x1 - r.x0 });
       overlay.appendChild(el);
       plates[r.id] = el;
     });
@@ -130,8 +162,8 @@
         var el = document.createElement('div');
         el.className = 'floor-tag';
         el.textContent = f.text;
-        el.style.left = '10px';
-        el.style.top = (f.y - 8) + 'px';
+        el.style.transform = 'translateX(-100%)';
+        overlayItems.push({ el: el, x: geo.stair.x0 - 6, y: f.y - 8 });
         overlay.appendChild(el);
       });
   }
@@ -402,8 +434,8 @@
         var ft = document.createElement('div');
         ft.className = 'filetag';
         ft.textContent = (WORK_EMOJI[wtype] || '') + ' ' + fname;
-        ft.style.left = ((room.x0 + room.x1) / 2) + 'px';
-        ft.style.top = (room.y0 + 12) + 'px';
+        ft.style.left = Math.round(((room.x0 + room.x1) / 2) * scaleK) + 'px';
+        ft.style.top = Math.round((room.y0 + 12) * scaleK) + 'px';
         overlay.appendChild(ft);
         setTimeout(function () { ft.remove(); }, 2500);
       }
@@ -541,8 +573,8 @@
         ty -= 8;
       }
       placed.push({ x: a.x, y: ty });
-      el.style.left = Math.round(a.x) + 'px';
-      el.style.top = Math.round(ty) + 'px';
+      el.style.left = Math.round(a.x * scaleK) + 'px';
+      el.style.top = Math.round(ty * scaleK) + 'px';
     });
     Object.keys(nameTags).forEach(function (id) {
       if (!state.agents.has(id)) { nameTags[id].remove(); delete nameTags[id]; }
