@@ -1,6 +1,6 @@
 {
   "name": "digitally-office",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A retro pixel-art office that visualizes your dev activity live — every module is a room, agents (you + your Claude Code sessions) walk around and work, commits launch rockets. Music-reactive; built for live-coding/DJ sets.",
   "keywords": [
     "visualization",
