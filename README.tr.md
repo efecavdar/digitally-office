@@ -4,8 +4,8 @@
 
 ![Ofisin iki katında çalışan dört ajan](media/preview.gif)
 
-<sub>Gerçek bir oturumun kaydı: aynı repoda aynı anda çalışan bir geliştirici
-ve üç Claude Code ajanı.</sub>
+<sub>Demo modu, pakete gömülü örnek veriyle. Kendi reponuzda
+<code>npx digitally-office</code> çalıştırın; odalar sizin klasörleriniz olur.</sub>
 
 Repo'nun her modülü bir oda olur. Pixel ajanlar — sen *ve Claude Code
 oturumların* — odalar arasında dolaşır, masalara oturur, o an gerçekten

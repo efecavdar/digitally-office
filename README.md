@@ -9,8 +9,8 @@
 
 ![Four agents working across two floors of the office](media/preview.gif)
 
-<sub>Recording of a real session: one developer and three Claude Code agents
-working in the same repo at the same time.</sub>
+<sub>Demo mode with the bundled sample data. Run <code>npx digitally-office</code>
+in your own repo and the rooms become your directories.</sub>
 
 Every module of your repo becomes a room. Pixel agents — you *and your Claude
 Code sessions* — walk between rooms, sit at desks and work on whatever is
